@@ -1,1 +1,27 @@
-This is a test to be added into github
+>>> to clone a git repository in terminal:
+	$ git clone https://github.com/duchtran/cmpe195.git
+
+>>> to add a remote to git:
+	$ git remote add NAME https://github.com/duchtran/cmpe195.git
+
+>>> to add a file to git repository:
+	$ git add FILENAME
+	$ git commit -m "The comment for your commit"
+	$ git push REMOTE_NAME	
+
+>>> to delete a file from git repository:
+	$ git rm PATH/FILE_NAME
+	$ git commit -m "The comment for your commit"
+	$ git push REMOTE_NAME	
+
+>>> to rename a file in repository:
+	$ git mv NAME NEW_NAME
+	$ git commit -m "message"
+	$ git push REMOTE_NAME
+
+>>> to fetch/merge/pull from git repository:
+	$ git fetch/merge/pull REMOTE_NAME
+  . NOTE: 
+	~ fetch: copy files but keep them separated 
+	~ merge: merge files between repository and local folder
+	~ pull: fetch + merge
