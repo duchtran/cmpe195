@@ -30,4 +30,4 @@
 	$ git log
 
 >>> to compare the differences of 2 commits:
-	$ git log $ID1 $ID2
+	$ git diff $ID1 $ID2
