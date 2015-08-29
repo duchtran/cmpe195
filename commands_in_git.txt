@@ -25,3 +25,9 @@
 	~ fetch: copy files but keep them separated 
 	~ merge: merge files between repository and local folder
 	~ pull: fetch + merge
+
+>>> to show the log id of previous commit:
+	$ git log
+
+>>> to compare the differences of 2 commits:
+	$ git log $ID1 $ID2
