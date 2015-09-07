@@ -2,7 +2,7 @@
 	$ git clone https://github.com/duchtran/cmpe195.git
 
 >>> to add a remote to git:
-	$ git remote add NAME https://github.com/duchtran/cmpe195.git
+	$ git remote add REMOTE_NAME https://github.com/duchtran/cmpe195.git
 
 >>> to add a file to git repository:
 	$ git add FILENAME
