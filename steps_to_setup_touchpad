@@ -1,0 +1,64 @@
+1. Download Kernel:
+	curl -SLs https://apt.adafruit.com/add-pin | sudo bash
+
+2. Install Kernel:
+	sudo apt-get install raspberrypi-bootloader
+
+WARNING: DON'T USE rpi-update
+
+3. Add the device tree overlay manually:
+	$ sudo vim  /boot/config.txt	
+	. in text file:
+		[pi1]
+		device_tree=bcm2708-rpi-b-plus.dtb
+		[pi2]
+		device_tree=bcm2709-rpi-2-b.dtb
+		[all]
+		dtparam=spi=on
+		dtparam=i2c1=on
+		dtparam=i2c_arm=on
+		dtoverlay=pitft28r,rotate=90,speed=32000000,fps=20
+
+4. reboot
+	$ sudo reboot
+
+5. Start the touchpad screen:
+	$ sudo mv /usr/share/X11/xorg.conf.d/99-fbturbo.conf ~
+	$ export FRAMEBUFFER=/dev/fb1
+	$ startx
+
+6. Add support to the touchscreen by editting the module list:
+	$ sudo vim /etc/modules
+	add stmpe-ts on a line at the end	
+ 	save the file and reboot	
+
+7. Create the directory and new calibration configuration file:
+ 	$ sudo mkdir /etc/X11/xorg.conf.d
+	$ sudo nano /etc/X11/xorg.conf.d/99-calibration.conf
+
+	Section "InputClass"
+        Identifier      "calibration"
+        MatchProduct    "stmpe-ts"
+        Option  "Calibration"   "3800 200 200 3800"
+        Option  "SwapAxes"      "1"
+	EndSection
+
+8. Start the GUI on the touchpad:
+	$ FRAMEBUFFER=/dev/fb1 startx
+
+9. Set up touchscreen:
+	$ sudo vim /etc/udev/rules.d/95-stmpe.rules
+
+	SUBSYSTEM=="input", ATTRS{name}=="stmpe-ts", ENV{DEVNAME}=="*event*", SYMLINK+="input/touchscreen" 
+
+10. Remove and reinstall the touchscreen:
+	$ sudo rmmod stmpe_ts; sudo modprobe stmpe_ts
+
+11. Install tslib to calibrate the touchscreen:
+	$ sudo apt-get install evtest tslib libts-bin
+
+12. Calibrate the touchscreen:
+	$ sudo TSLIB_FBDEVICE=/dev/fb1 TSLIB_TSDEVICE=/dev/input/touchscreen ts_calibrate
+	
+13. Test the calibrated touchscreen:
+	$ sudo TSLIB_FBDEVICE=/dev/fb1 TSLIB_TSDEVICE=/dev/input/touchscreen ts_test
