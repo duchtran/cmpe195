@@ -1,3 +1,6 @@
+- install raspberian:   http://www.makeuseof.com/tag/install-operating-system-raspberry-pi/
 - WebIDE for RPi2:	http://www.jann.cc/2013/01/15/trying_out_the_adafruit_webide.html
 
 - Install touchpad: 	https://learn.adafruit.com/adafruit-pitft-28-inch-resistive-touchscreen-display-raspberry-pi/software-installation
+
+
