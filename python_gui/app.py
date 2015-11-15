@@ -13,10 +13,17 @@ def authenticate():
 
 def raise_frame(frame):
 	frame.tkraise() 
+
 def raise_and_destroy_frame(frame1,*frameL):
 	frame1.tkraise() 
 	for f in frameL:
 		f.destroy()
+
+def play_song(songlist):
+	try:
+		print songlist.get(songlist.curselection())
+	except:
+		print ("Nothing is selected")
 
 def option_frame():
 	"""Section to define OPTION frame"""
@@ -29,16 +36,17 @@ def songList_frame():
 	raise_frame(songList)
 	songListC = Frame(songList)
 	songListC1 = Frame(songList)
-	songListC.pack(fill=BOTH, expand="true")
+	songListC.pack(fill=BOTH, expand="true", padx=10)
 	songListC1.pack(side=BOTTOM)
 	scrollbar = Scrollbar(songListC)
 	myList = Listbox(songListC, yscrollcommand = scrollbar.set)
 	for line in range (100):
 		myList.insert(END, "This is line number " + str(line))
 	myList.pack(side = LEFT, fill=BOTH, expand = "true")
-	scrollbar.pack(side = LEFT, fill = Y)
+	scrollbar.pack(side = RIGHT, fill=Y)
 	scrollbar.config(command = myList.yview)
-	Button(songListC1, text='Back', command=lambda:raise_and_destroy_frame(option,songListC, songListC1)).pack()
+	Button(songListC1, text='Back', command=lambda:raise_and_destroy_frame(option,songListC, songListC1)).pack(side = LEFT)
+	Button(songListC1, text='Play', command=lambda:play_song(myList)).pack(side=LEFT, padx=40)
 
 
 
