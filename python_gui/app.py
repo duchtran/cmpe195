@@ -25,20 +25,19 @@ def raise_and_destroy_frame(frame1,*frameL):
 def play_song(songlist, *frame):
 	try:
 		playingSong = songlist.get(songlist.curselection())
-		print playingSong
 		if (playingSong):
 			for f in frame:
 				f.destroy()
 			playSong_frame(playingSong)
 	except:
-		print ("Please select a song from the list")
+		tkMessageBox.showinfo("Invalid Selection","Please choose a song from the list")
 
 def option_frame():
 	"""Section to define OPTION frame"""
 	raise_frame(option)
 	Button(option, text='Song List', command=songList_frame).grid(row=1, column=0, padx=20, pady=20)
 	Button(option, text='Playlist').grid(row=1, column=1, padx=10) 
-	Button(option, text='Back', command=lambda:raise_frame(login)).grid(row=10)
+	Button(option, text='Quit', command=lambda:raise_frame(login)).grid(row=10)
 	
 def songList_frame():
 	raise_frame(songList)
@@ -82,7 +81,7 @@ raise_frame(login)
 
 """Section for 'login' frame""" 
 Label(login).grid(row=0,rowspan=2)
-Label(login, text = "Welcome to airSound - The Streaming Speaker\n\nPlease log in\n").grid(rowspan=2,columnspan=2, row=2)
+Label(login, text = "Welcome to airSound - The Streaming Speaker\n\nPlease sign in\n").grid(rowspan=2,columnspan=2, row=2)
 Label(login, text="Username:").grid(row=4)
 Label(login, text="Password:").grid(row=5)
 Label(login).grid(row=6,rowspan=2)
@@ -93,7 +92,7 @@ passwordTF = Entry(login, show="*")
 usernameTF.grid(row=4, column=1)
 passwordTF.grid(row=5, column=1)
 
-Button(login, text='Login', command=authenticate).grid(row=8,columnspan=2, pady=4)
+Button(login, text='Sign In', command=authenticate).grid(row=8,columnspan=2, pady=4)
 
 
 
