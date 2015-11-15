@@ -1,6 +1,6 @@
 from Tkinter import *
 
-def show_entry_fields():
+def authenticate():
    print("Username: %s\nPassword: %s" % (usernameTF.get(), passwordTF.get()))
 
 
@@ -21,6 +21,6 @@ usernameTF.grid(row=4, column=1)
 passwordTF.grid(row=5, column=1)
 
 #Button(master, text='Quit', command=master.quit).grid(row=4, column=0, sticky=W, pady=4)
-Button(master, text='   Show   ', command=show_entry_fields).grid(row=8, column=1,columnspan=2, sticky=W, pady=4)
+Button(master, text='   Login   ', command=authenticate).grid(row=8, column=1,columnspan=2, sticky=W, pady=4)
 
 mainloop()
