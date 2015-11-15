@@ -1,6 +1,9 @@
 from Tkinter import *
 import tkMessageBox
 
+"""Section to define global variables"""
+playingSong = ""
+##########
 """Section to define functions"""
 def authenticate():
 #	print("Username: %s\nPassword: %s" % (usernameTF.get(), passwordTF.get()))
@@ -15,15 +18,20 @@ def raise_frame(frame):
 	frame.tkraise() 
 
 def raise_and_destroy_frame(frame1,*frameL):
-	frame1.tkraise() 
 	for f in frameL:
 		f.destroy()
+	frame1()
 
-def play_song(songlist):
+def play_song(songlist, *frame):
 	try:
-		print songlist.get(songlist.curselection())
+		playingSong = songlist.get(songlist.curselection())
+		print playingSong
+		if (playingSong):
+			for f in frame:
+				f.destroy()
+			playSong_frame(playingSong)
 	except:
-		print ("Nothing is selected")
+		print ("Please select a song from the list")
 
 def option_frame():
 	"""Section to define OPTION frame"""
@@ -45,12 +53,19 @@ def songList_frame():
 	myList.pack(side = LEFT, fill=BOTH, expand = "true")
 	scrollbar.pack(side = RIGHT, fill=Y)
 	scrollbar.config(command = myList.yview)
-	Button(songListC1, text='Back', command=lambda:raise_and_destroy_frame(option,songListC, songListC1)).pack(side = LEFT)
-	Button(songListC1, text='Play', command=lambda:play_song(myList)).pack(side=LEFT, padx=40)
+	Button(songListC1, text='Back', command=lambda:raise_and_destroy_frame(option_frame,songListC, songListC1)).pack(side = LEFT)
+	Button(songListC1, text='Play', command=lambda:play_song(myList, songListC, songListC1)).pack(side=LEFT, padx=40)
 
 
+def playSong_frame(song):
+	raise_frame(playSong)
+	playSongC = Frame(playSong)
+	playSongC.pack(fill=BOTH, expand="true", padx=10)
+	Label(playSongC, text=song).pack(side=LEFT)
+	Button(playSongC, text='Back', command=lambda:raise_and_destroy_frame(songList_frame,playSongC)).pack(side = LEFT)
 
-"""Section for frames creating"""
+#############
+""" Section for frames creating"""
 root = Tk()
 root.title("airSound - The Streaming Speaker")
 root.geometry("324x240")
@@ -58,8 +73,9 @@ root.geometry("324x240")
 login = Frame(root)
 option = Frame(root)
 songList = Frame(root)
+playSong = Frame(root)
 
-for frame in (login, option, songList):
+for frame in (login, option, songList, playSong):
 	frame.grid(row=0, column=0, sticky='news')
 raise_frame(login) 
 
@@ -77,7 +93,6 @@ passwordTF = Entry(login, show="*")
 usernameTF.grid(row=4, column=1)
 passwordTF.grid(row=5, column=1)
 
-#Button(login, text='Next Frame', command=lambda:raise_frame(option)).grid(row=9, column=1, sticky=W, pady=4)
 Button(login, text='Login', command=authenticate).grid(row=8,columnspan=2, pady=4)
 
 
