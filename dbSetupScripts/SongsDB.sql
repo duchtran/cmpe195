@@ -70,9 +70,9 @@ CREATE TABLE performed_by (
 
 
 CREATE TABLE songs (
-  songID   int	 				NOT NULL AUTO_INCREMENT,
-  name     varchar(255) 		NOT NULL,
-  URL   char(1) 				NOT NULL,
+  songID   int	 			    	NOT NULL AUTO_INCREMENT,
+  name     varchar(255)      		NOT NULL,
+  URL   varchar(255) 				NOT NULL,
   PRIMARY KEY (songID)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 -- Auto_Increment ID. Starts at 1. So to do insert command, no need to add songID value since it auto increments
