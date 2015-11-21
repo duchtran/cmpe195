@@ -20,10 +20,10 @@ SET autocommit=0;
 DROP TABLE IF EXISTS authentication;
 
 CREATE TABLE authentication (
-  username varchar(20) 	    NOT NULL,
-  hashkey  int(11) 	    	NOT NULL,
-  initPw   varchar(20) 		NOT NULL,
-  dbID	   int			    NOT NULL AUTO_INCREMENT, 	
+  username varchar(20)	NOT NULL,
+  hashkey  int(11)     	NOT NULL,
+  initPw   char		NOT NULL,
+  dbID	   int		NOT NULL AUTO_INCREMENT, 	
   PRIMARY KEY (dbID)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 -- Auto_Increment ID. Starts at 1. So to do insert command, no need to add dbID value since it auto increments
@@ -32,7 +32,7 @@ CREATE TABLE authentication (
 start transaction;
 
 INSERT INTO authentication (username, hashkey, initPw) 
-VALUES ("airsound",39,"edwin"),("a",7,"123a");
+VALUES ("airsound",39,"a"),("db1",16,"t");
 
 commit;
 -- must include name of columns(except dbID) since we are auto incrementing
