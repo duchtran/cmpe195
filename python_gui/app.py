@@ -1,8 +1,13 @@
 from Tkinter import *
 import tkMessageBox
 import MySQLdb
-#import boto3
+import boto
+import boto.s3.connection
+from boto.s3.connection import S3Connection
+from boto.s3.key import Key
 """Section to define global variables"""
+access_key = 'AKIAJYZYULDIKQ2X34MA'
+secret_key = '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'
 ##########
 """Section to define functions"""
 def connectDB(dbName):
@@ -97,7 +102,7 @@ def songList_frame(dbName):
 	myList = Listbox(songListC, yscrollcommand = scrollbar.set)
 	try: 
 		cursor = connectDB(dbName)
-		### query song list	
+	### query song list	
 		sql = "select * from songs;"
 		cursor.execute(sql) 
 		results = cursor.fetchall()	
@@ -118,6 +123,10 @@ def play_song(dbName, songlist, *frame):
 		playingSong = songlist.get(songlist.curselection())
 		#test = playingSong
 		if (playingSong):
+			conn = S3Connection(access_key, secret_key)
+			bucket = conn.get_bucket('sjsu195db1')
+			key = bucket.get_key('Hot N Cold.mp3')
+			key.get_contents_to_filename('/home/duc/Desktop/test_folder/'+playingSong)
 			for f in frame:
 				f.destroy()
 			playSong_frame(dbName, playingSong)
