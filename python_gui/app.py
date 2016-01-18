@@ -6,14 +6,13 @@ import boto.s3.connection
 from boto.s3.connection import S3Connection
 from boto.s3.key import Key
 """Section to define global variables"""
-access_key = 'AKIAJYZYULDIKQ2X34MA'
-secret_key = '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'
+access_key = ''
+secret_key = ''
 ##########
 """Section to define functions"""
 def connectDB(dbName):
 	db = MySQLdb.connect("localhost", "root", "Phuongngo56", dbName)
-	cursor = db.cursor()	
-	return cursor
+	return db 
 
 def login_frame():
 	raise_frame(login)
@@ -30,7 +29,7 @@ def authenticate():
 		authen = [userdbName, hashkey, password[0]]
 		sql = """select * from authentication;"""
 		try:
-   			db = MySQLdb.connect("localhost", "root", "Phuongngo56", "AUTHENTICATION")
+   			db = connectDB("AUTHENTICATION")
 			cursor = db.cursor()
 			log = False
 			cursor.execute(sql)
@@ -51,11 +50,11 @@ def authenticate():
 				db.commit()
 			else:
 				passwordTF.delete(0,END)
-				tkMessageBox.showinfo("Invalid Information","Invalid User Name or Password\nPlease try again")
 				db.rollback()
+				tkMessageBox.showinfo("Invalid Information","Invalid User Name or Password\nPlease try again")
 		except:
 			tkMessageBox.showinfo("Cannot connect to database")
-
+		db.close()
 def raise_frame(frame):
 	frame.tkraise() 
 
@@ -113,6 +112,7 @@ def option_frame(dbName):
 	Button(option, text='Quit', command=lambda:raise_frame(login)).grid(row=10)
 	
 def songList_frame(dbName):
+	"""Section to define LIST OF SONGS frame"""
 	raise_frame(songList)
 	songListC = Frame(songList)
 	songListC1 = Frame(songList)
@@ -121,7 +121,8 @@ def songList_frame(dbName):
 	scrollbar = Scrollbar(songListC)
 	myList = Listbox(songListC, yscrollcommand = scrollbar.set)
 	try: 
-		cursor = connectDB(dbName)
+		db = connectDB(dbName)
+		cursor = db.cursor()
 	### query song list	
 		sql = "select * from songs order by name;"
 		cursor.execute(sql) 
@@ -131,23 +132,53 @@ def songList_frame(dbName):
 		myList.pack(side = LEFT, fill=BOTH, expand = "true",padx=2,pady=10)
 		scrollbar.pack(side = RIGHT, fill=Y, pady=10)
 		scrollbar.config(command = myList.yview)
+		db.commit()
 	except:
+		db.rollback()
 		tkMessageBox.showinfo("Cannot query database")
-
+	db.close()
 	Button(songListC1, text='Back', command=lambda:raise_and_destroy_frame(dbName, option_frame,songListC, songListC1)).pack(side = LEFT, padx=2)
 	Button(songListC1, text='Play', command=lambda:play_song(dbName, myList, songListC, songListC1)).pack(side=LEFT, padx=40)
-	Button(songListC1, text='Add to\nPlaylist').pack(side = LEFT)
+	Button(songListC1, text='Add to\nPlaylist', command=lambda:add_play_list(dbName, myList)).pack(side = LEFT)
 
+def check_query(dbName, table, column_number, value):
+	db = connectDB(dbName)
+	cursor = db.cursor()
+	sql = "select * from %s;" % table	
+	cursor.execute(sql)
+	results = cursor.fetchall()
+	for row in results:
+		if value == str(row[column_number]):
+			db.close()
+			return False
+	db.close()
+	return True
+
+def add_play_list(dbName, songlist):
+	addSong = songlist.get(songlist.curselection())
+	if (addSong):
+		if check_query(dbName, "playlist", 1, addSong):
+			db = connectDB(dbName)
+			cursor = db.cursor()
+			sql = "insert into playlist (name) value ('%s');" % addSong
+ 			cursor.execute(sql)
+			db.commit()
+			db.close()
+			tkMessageBox.showinfo("MySQL Success","Song is successfully added into playlist")
+		else:
+			tkMessageBox.showinfo("MySQL Error","Selected Song is already in the playlist")
+	else:
+		tkMessageBox.showinfo("Invalid Selection","Please choose a song to add to playlist") 
 
 def play_song(dbName, songlist, *frame):
 	try:
 		playingSong = songlist.get(songlist.curselection())
 		#test = playingSong
 		if (playingSong):
-			conn = S3Connection(access_key, secret_key)
-			bucket = conn.get_bucket('sjsu195db1')
-			key = bucket.get_key(playingSong)
-			key.get_contents_to_filename('/home/duc/Desktop/test_folder/'+playingSong)
+		#	conn = S3Connection(access_key, secret_key)
+		#	bucket = conn.get_bucket('sjsu195db1')
+		#	key = bucket.get_key(playingSong)
+		#	key.get_contents_to_filename('/home/duc/Desktop/test_folder/'+playingSong)
 			for f in frame:
 				f.destroy()
 			playSong_frame(dbName, playingSong)
