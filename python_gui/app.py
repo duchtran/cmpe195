@@ -21,39 +21,40 @@ def authenticate():
 	userdbName = userdbNameTF.get()
 	password = passwordTF.get()
 	hashkey = 0
-	for c in password:
-		hashkey += ord(c) % 16
-
-	authen = [userdbName, hashkey, password[0]]
-
-
-	sql = """select * from authentication;"""
-	try:
-   		db = MySQLdb.connect("localhost", "root", "Phuongngo56", "AUTHENTICATION")
-		cursor = db.cursor()
-		log = False
-		cursor.execute(sql)
-		results = cursor.fetchall()
-		for row in results:
-			valid = 0
-			for i in range (0,3):
-				if (authen[i] == row[i]):
-					valid += 1;	
-			if (valid == 3):
-				log = True
-				break
-		if (log):
-			dbName = authen[0]
-	#		sql = """use %s""" % dbName  
-	#		cursor.execute(sql) 
-			option_frame(dbName)
-			db.commit()
-		else:
-			passwordTF.delete(0,END)
-			tkMessageBox.showinfo("Invalid Information","Invalid UserdbName or Password\nPlease try again")
-			db.rollback()
-	except:
-		tkMessageBox.showinfo("Cannot connect to database")
+	if (len(userdbName) == 0 or len(password) == 0):
+		passwordTF.delete(0,END)
+		tkMessageBox.showinfo("Invalid Information","Invalid User Name or Password\nPlease try again")
+	else:	
+		for c in password:
+			hashkey += ord(c) % 16
+		authen = [userdbName, hashkey, password[0]]
+		sql = """select * from authentication;"""
+		try:
+   			db = MySQLdb.connect("localhost", "root", "Phuongngo56", "AUTHENTICATION")
+			cursor = db.cursor()
+			log = False
+			cursor.execute(sql)
+			results = cursor.fetchall()
+			for row in results:
+				valid = 0
+				for i in range (0,3):
+					if (authen[i] == row[i]):
+						valid += 1;	
+				if (valid == 3):
+					log = True
+					break
+			if (log):
+				dbName = authen[0]
+		#		sql = """use %s""" % dbName  
+		#		cursor.execute(sql) 
+				option_frame(dbName)
+				db.commit()
+			else:
+				passwordTF.delete(0,END)
+				tkMessageBox.showinfo("Invalid Information","Invalid User Name or Password\nPlease try again")
+				db.rollback()
+		except:
+			tkMessageBox.showinfo("Cannot connect to database")
 
 def raise_frame(frame):
 	frame.tkraise() 
@@ -74,16 +75,35 @@ def register_frame():
 	registerC1 = Frame(register)
 	registerC.grid() 
 	registerC1.grid()
-	Button(registerC1, text='Cancel', command=lambda:cancel_and_return(login_frame, registerC, registerC1)).pack(pady=10)
-	Label(registerC).grid(row=0, pady=20)
+	Label(registerC, text="Please enter information").grid(row=0, pady=25, columnspan=2)
 	Label(registerC, text="UserName:").grid(row=1,column=0, padx=10)
-	regUserdbNameTF = Entry(registerC).grid(row=1, column=1, padx=10)
-	Label(registerC, text="Password:").grid(row=2,column=0, padx=10,pady=20)
-	regPasswordTF = Entry(registerC, show="*").grid(row=2,column=1, padx=10, pady=20)
-	Label(registerC, text="Confirm Password:").grid(row=3,column=0, padx=10,pady=5)
-	confirmGegPasswordTF = Entry(registerC, show="*").grid(row=3,column=1, padx=10)
-	#Label(registerC, text="Password:").grid()
-	#Button(login, text='Sign In', command=authenticate).grid(row=8,column = 0, pady=4) 
+	Label(registerC, text="Password:").grid(row=2,column=0, padx=10)
+	Label(registerC, text="Confirm Password:").grid(row=3,column=0, padx=10,pady=15)
+	regUserdbNameTF = Entry(registerC)
+	regPasswordTF = Entry(registerC, show="*")
+	confirmRegPasswordTF = Entry(registerC, show="*")
+	####
+	regUserdbNameTF.grid(row=1, column=1, padx=10)
+	regPasswordTF.grid(row=2,column=1, padx=10)
+	confirmRegPasswordTF.grid(row=3,column=1, padx=10,pady=15)
+	####
+	Button(registerC1, text='Cancel', command=lambda:cancel_and_return(login_frame, registerC, registerC1)).pack(side=LEFT, pady=10)
+	Button(registerC1, text='Register', command=lambda:test(regUserdbNameTF.get(), regPasswordTF.get(), confirmRegPasswordTF.get(), registerC, registerC1)).pack(side=RIGHT,padx=30,pady=10)
+
+def test(dbName, password, confirmPassword, *frameL):
+	if len(dbName) == 0 or len(password) == 0 or len(confirmPassword) == 0:
+		tkMessageBox.showinfo("Invalid Information","Invalid User Name or Password\nPlease try again")
+	elif password != confirmPassword:
+		tkMessageBox.showinfo("Invalid Information","Invalid User Name or Password\nPlease try again")
+		for f in frameL:
+			f.destroy()
+		register_frame()
+	else:
+		for f in frameL:
+			f.destroy()
+		login_frame()	
+		tkMessageBox.showinfo("Account created","Successfully create account\nPlease log in ")
+		print "testing"	
 
 def option_frame(dbName):
 	"""Section to define OPTION frame"""
@@ -125,7 +145,7 @@ def play_song(dbName, songlist, *frame):
 		if (playingSong):
 			conn = S3Connection(access_key, secret_key)
 			bucket = conn.get_bucket('sjsu195db1')
-			key = bucket.get_key('Hot N Cold.mp3')
+			key = bucket.get_key(playingSong)
 			key.get_contents_to_filename('/home/duc/Desktop/test_folder/'+playingSong)
 			for f in frame:
 				f.destroy()
@@ -158,8 +178,10 @@ for frame in (login, option, songList, playSong, register):
 login_frame()
 
 """Section for 'login' frame""" 
-Label(login).grid(row=0,rowspan=2)
-Label(login, text = "Welcome to airSound - The Streaming Speaker\n\nPlease sign in\n").grid(rowspan=2,columnspan=2, row=2)
+Label(login).grid(row=0,rowspan=2, pady=10)
+Label(login, text = "Welcome to airSound - The Streaming Speaker").grid(row=2,columnspan=2, ipadx=15)
+Label(login, text= "Please sign in").grid(row=3,columnspan=2,pady=10)
+#Label(login, text = "Welcome to airSound - The Streaming Speaker\n\nPlease sign in\n").grid(rowspan=2,columnspan=2, row=2)
 Label(login, text="User Name:").grid(row=4)
 Label(login, text="Password:").grid(row=5)
 Label(login).grid(row=6,rowspan=2)
@@ -170,7 +192,7 @@ passwordTF = Entry(login, show="*")
 userdbNameTF.grid(row=4, column=1)
 passwordTF.grid(row=5, column=1)
 
-Button(login, text='Sign In', command=authenticate).grid(row=8,column = 0, pady=4)
+Button(login, text='Sign In', command=authenticate).grid(sticky=E,row=8,column = 0, pady=4)
 
 Button(login, text='Register', command=register_frame).grid(row=8,column = 1, pady=4)
 
