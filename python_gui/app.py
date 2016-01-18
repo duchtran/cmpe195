@@ -123,19 +123,20 @@ def songList_frame(dbName):
 	try: 
 		cursor = connectDB(dbName)
 	### query song list	
-		sql = "select * from songs;"
+		sql = "select * from songs order by name;"
 		cursor.execute(sql) 
 		results = cursor.fetchall()	
 		for row in results:
 			myList.insert(END, str(row[1]))
-		myList.pack(side = LEFT, fill=BOTH, expand = "true")
-		scrollbar.pack(side = RIGHT, fill=Y)
+		myList.pack(side = LEFT, fill=BOTH, expand = "true",padx=2,pady=10)
+		scrollbar.pack(side = RIGHT, fill=Y, pady=10)
 		scrollbar.config(command = myList.yview)
 	except:
 		tkMessageBox.showinfo("Cannot query database")
 
-	Button(songListC1, text='Back', command=lambda:raise_and_destroy_frame(dbName, option_frame,songListC, songListC1)).pack(side = LEFT)
+	Button(songListC1, text='Back', command=lambda:raise_and_destroy_frame(dbName, option_frame,songListC, songListC1)).pack(side = LEFT, padx=2)
 	Button(songListC1, text='Play', command=lambda:play_song(dbName, myList, songListC, songListC1)).pack(side=LEFT, padx=40)
+	Button(songListC1, text='Add to\nPlaylist').pack(side = LEFT)
 
 
 def play_song(dbName, songlist, *frame):
